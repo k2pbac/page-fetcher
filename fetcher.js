@@ -21,10 +21,8 @@ const fetcher = (url, path) => {
 const checkExisting = (path,body) => {
   
 fs.open(path, 'wx', (err, fd) => {
-  if(err.code === 'EEXIST') {
-
+  if(err && err.code === 'EEXIST') {
     rl.question('Existing file found: overwrite? (Y / N) ', (answer) => {
-
       if( answer.toLowerCase() === 'y') {
         try {
           writeMyFile(body, path);
@@ -39,9 +37,20 @@ fs.open(path, 'wx', (err, fd) => {
     });
 
   }
-  else if (err) {
+  else if(err) {
     console.log(err);
     return;
+  }
+  else{
+    try {
+      writeMyFile(body, path);
+      rl.close();
+    } catch(err) {
+      if(err) {
+        console.log(err);
+        return;
+      }
+    }
   }
 
 return;
@@ -50,17 +59,18 @@ return;
 
 const writeMyFile = (body, path) => {
 
+try{
 fs.writeFile(path, body, (err) => {
-
 if(err){
   console.log(err);
   return;
 } 
-
 console.log("File written successfully"); 
 });
-
-
+}
+catch(error){
+  console.log(error)
+}
 };
 
-fetcher("http://www.google.ca/", './index.html');
+fetcher("http://www.google.ca/", './index.htmlsafdsaf');
